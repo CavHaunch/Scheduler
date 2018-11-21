@@ -29,10 +29,8 @@ def do_something(sc,X,Phase,Line,Fig):
     Fig.canvas.draw()
     Fig.canvas.flush_events()
 
-    if Phase > 6*np.pi:
-           exit()
-
-    s.enter(0.005, 1, do_something, (sc,X,Phase,Line,Fig))
+    if Phase < 6*np.pi:
+           s.enter(0.005, 1, do_something, (sc,X,Phase,Line,Fig))
 
 s.enter(1, 1, do_something, (s,x,phase,line1,fig))
 s.run()
