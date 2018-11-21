@@ -5,19 +5,34 @@ import sched, time
 
 s = sched.scheduler(time.time, time.sleep)
 
-def do_something(sc,X,Y,I,axes): 
-    X = np.linspace(0,2,100)
-    Y = np.linspace(0,2,100)+I
-    I = I+1.0
-    axes.plot(X,np.sin(Y))
-    plt.show()
-    s.enter(1, 1, do_something, (sc,X,Y,I,axes))
 
+phase = 0.0
+x = np.linspace(0, 6*np.pi, 100)
 
-x = np.zeros(100)
-y = np.zeros(100)
-i=0.0
-fig, ax = plt.subplots()
+# You probably won't need this if you're embedding things in a tkinter plot...
+plt.ion()
 
-s.enter(1, 1, do_something, (s,x,y,i,ax))
+fig = plt.figure()
+ax = fig.add_subplot(111)
+line1, = ax.plot(x, np.sin(x), 'r-') # Returns a tuple of line objects, thus the comma
+
+line1.set_ydata(np.sin(x))
+fig.canvas.draw()
+fig.canvas.flush_events()
+
+def do_something(sc,X,Phase,Line,Fig):
+    Phase = Phase + 0.3
+    X = np.linspace(0+Phase,6*np.pi+Phase,100)
+
+    Line.set_xdata(X)
+    Line.set_ydata(np.sin(X))
+    Fig.canvas.draw()
+    Fig.canvas.flush_events()
+
+    if Phase > 6*np.pi:
+           exit()
+
+    s.enter(0.005, 1, do_something, (sc,X,Phase,Line,Fig))
+
+s.enter(1, 1, do_something, (s,x,phase,line1,fig))
 s.run()
